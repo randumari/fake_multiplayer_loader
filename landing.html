@@ -1,0 +1,57 @@
+<html>
+<head>
+<style>
+
+#myBar {
+  width: 0%;
+  height: 30px;
+  background-color: #04AA6D;
+  text-align: center; /* To center it horizontally (if you want) */
+  line-height: 30px; /* To center it vertically */
+  color: white;
+}
+</style>
+</head>
+<body>
+<div id="myProgress">
+  Loading
+  <div id="myBar">0%</div>
+  <button type="button" onClick="send_load()">Load</button>   <button type="button" onClick="send_unload()">Unload</button>
+</div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+function page_load() {
+    this.io = io();
+	self = this;
+	self.width = 0;
+    this.io.on('client_load', function unload(unload_data)
+	    {
+			var elem = document.getElementById("myBar");
+			self.width -= 10;
+			elem.style.width = self.width + "%";
+			elem.innerHTML = self.width + "%";
+		}
+	);
+	this.io.on('client_unload', function load(unload_data)
+	    {
+			var elem = document.getElementById("myBar");
+			self.width += 10;
+			elem.style.width = self.width + "%";
+			elem.innerHTML = self.width + "%";
+		}
+	);
+}
+
+function send_load() {
+	this.io.emit('server_load', {});
+}
+
+function send_unload() {
+	this.io.emit('server_unload', {})
+}
+
+page_load();
+</script>
+</html>
